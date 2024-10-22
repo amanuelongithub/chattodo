@@ -20,6 +20,7 @@ class _SplashPageState extends State<SplashPage> {
 
   init() async {
     final navigator = Navigator.of(context);
+    await Future.delayed(const Duration(seconds: 1));
     String routeName = HomePage.route;
     navigator.pushNamedAndRemoveUntil(routeName, (route) => false);
   }
