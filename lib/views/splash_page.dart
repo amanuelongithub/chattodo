@@ -1,4 +1,5 @@
 import 'package:chattodo_test/constants.dart';
+import 'package:chattodo_test/views/auth/login_page.dart';
 import 'package:chattodo_test/views/home_page.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,8 @@ class _SplashPageState extends State<SplashPage> {
   init() async {
     final navigator = Navigator.of(context);
     await Future.delayed(const Duration(seconds: 1));
-    String routeName = HomePage.route;
+    // String routeName = HomePage.route;
+    String routeName = LoginPage.route;
     navigator.pushNamedAndRemoveUntil(routeName, (route) => false);
   }
 

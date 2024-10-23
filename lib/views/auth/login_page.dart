@@ -8,6 +8,8 @@ import '../../controller/auth_controller.dart';
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+  static String route = 'login-page';
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -32,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               Icon(Icons.error_outline_outlined, size: 120.sp),
               SizedBox(height: 20.h),
-              Text(auth.errorMsg ?? 'someting went wrong')
+              Text(auth.errorMsg ?? 'Someting went wrong')
             ],
           ));
         } else {
