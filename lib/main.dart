@@ -1,4 +1,3 @@
-import 'package:chattodo_test/controller/auth_controller.dart';
 import 'package:chattodo_test/firebase_options.dart';
 import 'package:chattodo_test/routs.dart';
 import 'package:chattodo_test/views/splash_page.dart';
@@ -12,7 +11,6 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
   runApp(const MyApp());
 }
 

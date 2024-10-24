@@ -7,6 +7,9 @@ class ChatHomepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: PreferredSize(preferredSize: const Size.fromHeight(80), child: AppBar(title: const Text('Chat App'))),
+      body: Container(color: Colors.blue),
+    );
   }
 }

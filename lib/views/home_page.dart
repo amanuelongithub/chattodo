@@ -1,4 +1,6 @@
+import 'package:chat/views/chat_homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:todo/views/todo_homepage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,9 +15,8 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-
-    const Text('Chat section'),
-    const Text('Todo section'),
+    const ChatHomepage(),
+    const TodoHomepage()
   ];
 
   void _onItemTapped(int index) {
@@ -27,9 +28,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Home Page'),
-      ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
       ),

@@ -19,10 +19,10 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    init();
+    chekLoggedIn();
   }
 
-  init() async {
+  chekLoggedIn() async {
     final navigator = Navigator.of(context);
 
     await Future.delayed(const Duration(seconds: 1));
@@ -37,9 +37,6 @@ class _SplashPageState extends State<SplashPage> {
         navigator.pushNamedAndRemoveUntil(LoginPage.route, (route) => false);
       }
     });
-    // String routeName = HomePage.route;
-    String routeName = LoginPage.route;
-    navigator.pushNamedAndRemoveUntil(routeName, (route) => false);
   }
 
   @override
