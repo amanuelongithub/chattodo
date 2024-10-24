@@ -1,0 +1,65 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "chattodo",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "chattodo (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "chattodo (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "chat",
+            "cwd": "packages\\chat",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "chat (profile mode)",
+            "cwd": "packages\\chat",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "chat (release mode)",
+            "cwd": "packages\\chat",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "todo",
+            "cwd": "packages\\todo",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "todo (profile mode)",
+            "cwd": "packages\\todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "todo (release mode)",
+            "cwd": "packages\\todo",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}
