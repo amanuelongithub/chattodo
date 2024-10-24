@@ -33,13 +33,16 @@ dependencies:
   cupertino_icons: ^1.0.6
   firebase_auth: ^5.3.1
   firebase_core: ^3.6.0
+  cloud_firestore: ^5.2.1
   firebase_messaging: ^15.1.3
+  firebase_storage: ^12.1.3
   flutter:
     sdk: flutter
   flutter_local_notifications: ^17.2.3
   flutter_screenutil: ^5.9.0
   get: ^4.6.6
   get_storage: ^2.1.1
+  image_picker: ^1.1.2
   todo:
     path: packages/todo
 dev_dependencies:

@@ -1,6 +1,5 @@
 import 'package:chattodo_test/constants.dart';
 import 'package:chattodo_test/views/auth/login_page.dart';
-import 'package:chattodo_test/views/home_page.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
