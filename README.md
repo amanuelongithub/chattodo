@@ -70,6 +70,5 @@ __Chattodo_test
        - image_picker | Pick images from local storage
        - cached_network_image | Cache images for better user experience (UX)
        - timeago | Descriptive display of time (UX)
-       - sqflite | Store large and complex data locally, permanently
        - flutter_screenutil | For adaptive screen adjustments
     ------------------------------------------------------------------
