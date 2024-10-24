@@ -1,3 +1,5 @@
+import 'package:chattodo_test/views/auth/login_page.dart';
+import 'package:chattodo_test/views/auth/signup_page.dart';
 import 'package:chattodo_test/views/home_page.dart';
 import 'package:chattodo_test/views/splash_page.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,8 @@ Map<String, WidgetBuilder> getRoutes() {
   return {
     SplashPage.route: (context) => const SplashPage(),
     HomePage.route: (context) => const HomePage(),
+    LoginPage.route: (context) => const LoginPage(),
+    SignUpPage.route: (context) => const SignUpPage(),
     ...chat.getChatRoutes(),
     ...todo.getTodoRoutes(),
   };
