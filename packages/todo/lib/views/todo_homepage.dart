@@ -7,6 +7,11 @@ class TodoHomepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(80),
+          child: AppBar(title: const Text('Todo App'))),
+      body: Container(color: Colors.grey),
+    );
   }
 }
