@@ -1,7 +1,7 @@
 name: todo
 description: "A new Flutter package project."
 version: 0.0.1
-homepage: null
+homepage: 'null'
 publish_to: 'none'
 
 environment:
@@ -24,6 +24,8 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  uses-material-design: true # Required if you use the Material icon font
 
   # To add assets to your package, add an assets section, like this:
   # assets:
