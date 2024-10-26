@@ -1,20 +1,22 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat/controller/firestore_controller.dart';
+import 'package:chat/views/chat_page.dart';
 import 'package:chattodo_test/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class UserCard extends StatelessWidget {
   const UserCard({super.key, required this.user});
-
   final UserModel user;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () {
-          // Get.find<ChatController>().getUserById(widget.user.uid);
-          // Get.find<ChatController>().getMessages(widget.user.uid);
-          // Navigator.pushNamed(context, ChatPage.route);
+          Get.find<FirestoreController>().getUserById(user.uid);
+          Get.find<FirestoreController>().getMessages(user.uid);
+          Navigator.pushNamed(context, ChatPage.route);
         },
         child: ListTile(
           contentPadding: EdgeInsets.zero,

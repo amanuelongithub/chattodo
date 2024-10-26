@@ -1,10 +1,12 @@
 import 'package:chat/controller/chat_homepage_controller.dart';
+import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_usercard.dart';
 import 'package:chattodo_test/constants.dart';
 import 'package:chattodo_test/models/user_model.dart';
 import 'package:chattodo_test/views/widget/error_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ChatHomepage extends StatefulWidget {
@@ -19,6 +21,7 @@ class ChatHomepage extends StatefulWidget {
 class _ChatHomepageState extends State<ChatHomepage>
     with WidgetsBindingObserver {
   ChatHomepageController homepageController = Get.put(ChatHomepageController());
+  FirestoreController chatpageController = Get.put(FirestoreController());
 
   @override
   void initState() {
@@ -55,12 +58,19 @@ class _ChatHomepageState extends State<ChatHomepage>
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(60),
                 child: AppBar(
-                  leading: const Icon(
-                    Icons.menu,
-                    color: Colors.white,
-                  ),
+                  leading: Builder(builder: (context) {
+                    return IconButton(
+                      icon: const Icon(
+                        Icons.menu,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                    );
+                  }),
                   title: Text(
-                    getProfile().name.toUpperCase(),
+                    'Telegram',
                     style: const TextStyle(color: Colors.white),
                   ),
                   actions: [
@@ -75,6 +85,76 @@ class _ChatHomepageState extends State<ChatHomepage>
                     )
                   ],
                 )),
+            drawer: Drawer(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  DrawerHeader(
+                      decoration: const BoxDecoration(
+                        color: Colors.black,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 38.r,
+                            backgroundImage: NetworkImage(getProfile().image),
+                          ),
+                          Spacer(),
+                          Text(
+                            getProfile().name.toUpperCase(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                          Text(
+                            getProfile().email,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          Spacer(),
+                        ],
+                      )
+                      // ListTile(
+                      //   leading: CircleAvatar(
+                      //     radius: 30,
+                      //     backgroundImage: NetworkImage(getProfile().image),
+                      //   ),
+                      //   title: Text(
+                      //     getProfile().name,
+                      //     style: const TextStyle(
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+                      //   subtitle: Text(
+                      //     getProfile().email,
+                      //     style: const TextStyle(
+                      //       color: Colors.white,
+                      //     ),
+                      //   ),
+
+                      // )
+
+                      ),
+                  ListTile(
+                    leading: const Icon(Icons.group),
+                    title: const Text('Create group'),
+                    onTap: () {
+                      // Handle tap
+                    },
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.logout),
+                    title: Text('Logout'),
+                    onTap: () {
+                      // Handle tap
+                    },
+                  ),
+                ],
+              ),
+            ),
             body: Container(
                 decoration: const BoxDecoration(
                     color: Colors.white,
