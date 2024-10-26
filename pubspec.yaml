@@ -43,6 +43,8 @@ dependencies:
   get: ^4.6.6
   get_storage: ^2.1.1
   image_picker: ^1.1.2
+  cached_network_image: ^3.4.1
+  timeago: ^3.7.0
   todo:
     path: packages/todo
 dev_dependencies:

@@ -1,3 +1,4 @@
+import 'package:chattodo_test/constants.dart';
 import 'package:chattodo_test/firebase_options.dart';
 import 'package:chattodo_test/routs.dart';
 import 'package:chattodo_test/views/splash_page.dart';
@@ -26,7 +27,10 @@ class MyApp extends StatelessWidget {
         builder: (context, widget) {
           return GetMaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: ThemeData(useMaterial3: true),
+            theme: ThemeData(
+                useMaterial3: true,
+                appBarTheme:
+                    AppBarTheme(backgroundColor: AppConstant.kcAppbarbg)),
             initialRoute: SplashPage.route,
             routes: getRoutes(),
           );

@@ -1,3 +1,4 @@
+import 'package:chattodo_test/constants.dart';
 import 'package:flutter/material.dart';
 
 class TodoHomepage extends StatelessWidget {
@@ -11,7 +12,7 @@ class TodoHomepage extends StatelessWidget {
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(80),
           child: AppBar(title: const Text('Todo App'))),
-      body: Container(color: Colors.grey),
+      body: Container(color: AppConstant.kcPrimary),
     );
   }
 }
