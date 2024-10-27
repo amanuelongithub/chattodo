@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:chat/controller/firestore_controller.dart';
+import 'package:chattodo_test/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,6 +15,7 @@ class ChatCustomTextfield extends StatefulWidget {
 
 class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   String? text;
+  Uint8List? file;
   bool startWriting = false;
   @override
   Widget build(BuildContext context) {
@@ -56,13 +60,16 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     onPressed: () {},
                     icon: const Icon(Icons.audiotrack, size: 20)),
                 IconButton(
-                    onPressed: () async {
-                      // final pickedImage = await pickImage();
-                    },
+                    onPressed: () async => _sendImage(),
                     icon: const Icon(Icons.image, size: 20))
               } else ...{
                 IconButton(
                     onPressed: () async {
+                      setState(() {
+                        text = null;
+                        startWriting = false;
+                      });
+                      FocusScope.of(context).unfocus();
                       await Get.find<FirestoreController>().addTextMessage(
                         receiverId:
                             Get.find<FirestoreController>().partner!.uid,
@@ -72,5 +79,16 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     icon: const Icon(Icons.send, size: 25)),
               }
             ])));
+  }
+
+  Future<void> _sendImage() async {
+    final pickedImage = await pickImage();
+    setState(() => file = pickedImage);
+    if (file != null) {
+      await FirestoreController.addImageMessage(
+        receiverId: Get.find<FirestoreController>().partner!.uid,
+        file: file!,
+      );
+    }
   }
 }

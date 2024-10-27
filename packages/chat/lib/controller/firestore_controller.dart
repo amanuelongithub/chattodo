@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chat/models/chat_message_model.dart';
 import 'package:chattodo_test/controller/services_controller.dart';
 import 'package:chattodo_test/models/user_model.dart';
@@ -59,7 +61,27 @@ class FirestoreController extends GetxController {
       messageType: MessageType.text,
       senderId: FirebaseAuth.instance.currentUser!.uid,
     );
-    await ServicesController.addMessageToChat(addToChat??true, receiverId, message);
+    await ServicesController.addMessageToChat(
+        addToChat ?? true, receiverId, message);
+  }
+
+  static Future<void> addImageMessage({
+    bool? addToChat,
+    required String receiverId,
+    required Uint8List file,
+  }) async {
+    final image = await ServicesController.uploadImage(
+        file, 'image/chat/${DateTime.now()}');
+
+    final message = MessageModel(
+      content: image,
+      sentTime: DateTime.now(),
+      receiverId: receiverId,
+      messageType: MessageType.image,
+      senderId: FirebaseAuth.instance.currentUser!.uid,
+    );
+    await ServicesController.addMessageToChat(
+        addToChat ?? true, receiverId, message);
   }
 
   void scrollDown() => WidgetsBinding.instance.addPostFrameCallback((_) {
