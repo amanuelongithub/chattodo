@@ -1,5 +1,4 @@
 import 'package:chat/controller/firestore_controller.dart';
-import 'package:chattodo_test/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -58,7 +57,7 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     icon: const Icon(Icons.audiotrack, size: 20)),
                 IconButton(
                     onPressed: () async {
-                      final pickedImage = await pickImage();
+                      // final pickedImage = await pickImage();
                     },
                     icon: const Icon(Icons.image, size: 20))
               } else ...{

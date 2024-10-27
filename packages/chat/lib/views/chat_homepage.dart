@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:chat/controller/chat_homepage_controller.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_usercard.dart';
 import 'package:chattodo_test/constants.dart';
-import 'package:chattodo_test/models/user_model.dart';
+import 'package:chattodo_test/controller/services_controller.dart';
 import 'package:chattodo_test/views/widget/error_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +29,7 @@ class _ChatHomepageState extends State<ChatHomepage>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
+    homepageController.fetchAllUsers();
   }
 
   @override
@@ -37,11 +40,10 @@ class _ChatHomepageState extends State<ChatHomepage>
 
   @override
   Widget build(BuildContext context) {
-    Get.find<ChatHomepageController>().fetchAllUsers();
-
     return Scaffold(
       body: GetBuilder<ChatHomepageController>(builder: (_) {
         if (_.isLoading) {
+          log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
           return Scaffold(
             body: Center(
                 child: CircularProgressIndicator(
@@ -53,7 +55,6 @@ class _ChatHomepageState extends State<ChatHomepage>
         } else if (_.users == null || _.users!.isEmpty) {
           return const ErrorPage(msg: 'Empty');
         } else {
-          homepageController.update();
           return Scaffold(
             appBar: PreferredSize(
                 preferredSize: const Size.fromHeight(60),
@@ -69,9 +70,9 @@ class _ChatHomepageState extends State<ChatHomepage>
                       },
                     );
                   }),
-                  title: Text(
+                  title: const Text(
                     'Telegram',
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: Colors.white),
                   ),
                   actions: [
                     IconButton(
@@ -98,58 +99,47 @@ class _ChatHomepageState extends State<ChatHomepage>
                         children: [
                           CircleAvatar(
                             radius: 38.r,
-                            backgroundImage: NetworkImage(getProfile().image),
+                            backgroundImage: _.currentUser != null
+                                ? NetworkImage(_.currentUser!.image)
+                                : null,
                           ),
-                          Spacer(),
+                          const Spacer(),
                           Text(
-                            getProfile().name.toUpperCase(),
+                            _.currentUser != null
+                                ? _.currentUser!.name.toUpperCase()
+                                : '',
                             style: const TextStyle(
                               color: Colors.white,
                             ),
                           ),
                           Text(
-                            getProfile().email,
+                            _.currentUser != null ? _.currentUser!.email : '',
                             style: TextStyle(
                               fontSize: 16.sp,
                               color: Colors.grey,
                             ),
                           ),
-                          Spacer(),
+                          const Spacer(),
                         ],
-                      )
-                      // ListTile(
-                      //   leading: CircleAvatar(
-                      //     radius: 30,
-                      //     backgroundImage: NetworkImage(getProfile().image),
-                      //   ),
-                      //   title: Text(
-                      //     getProfile().name,
-                      //     style: const TextStyle(
-                      //       color: Colors.white,
-                      //     ),
-                      //   ),
-                      //   subtitle: Text(
-                      //     getProfile().email,
-                      //     style: const TextStyle(
-                      //       color: Colors.white,
-                      //     ),
-                      //   ),
-
-                      // )
-
-                      ),
+                      )),
                   ListTile(
                     leading: const Icon(Icons.group),
                     title: const Text('Create group'),
-                    onTap: () {
-                      // Handle tap
-                    },
+                    onTap: () {},
                   ),
                   ListTile(
-                    leading: Icon(Icons.logout),
-                    title: Text('Logout'),
-                    onTap: () {
-                      // Handle tap
+                    leading: const Icon(Icons.logout),
+                    title: const Text('Logout'),
+                    onTap: () async {
+                      Navigator.pop(context);
+                      _.showLoading(true);
+
+                      await ServicesController.updateUserData({
+                        'lastActive': DateTime.now(),
+                        'isOnline': false,
+                      });
+                      await ServicesController().logoutUser();
+                      _.showLoading(false);
                     },
                   ),
                 ],
@@ -181,10 +171,5 @@ class _ChatHomepageState extends State<ChatHomepage>
         }
       }),
     );
-  }
-
-  UserModel getProfile() {
-    return homepageController.users!.firstWhere(
-        (user) => user.uid == FirebaseAuth.instance.currentUser?.uid);
   }
 }

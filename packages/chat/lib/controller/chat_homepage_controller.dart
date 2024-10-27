@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chattodo_test/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class ChatHomepageController extends GetxController {
@@ -10,6 +11,7 @@ class ChatHomepageController extends GetxController {
   bool isError = false;
   String? errorMsg;
 
+  UserModel? currentUser;
   List<UserModel>? users;
 
   Future<void> fetchAllUsers() async {
@@ -24,17 +26,16 @@ class ChatHomepageController extends GetxController {
           .collection('users')
           .orderBy('lastActive', descending: true)
           .snapshots(includeMetadataChanges: true)
-          .listen((userlist) {
+          .listen((userlist) async {
         users =
             userlist.docs.map((doc) => UserModel.fromJson(doc.data())).toList();
-
         isLoading = false;
+        log(users!.toList().toString());
         update();
       });
+      await setCurrentUser();
     } catch (e) {
-      isError = true;
       if (e is FirebaseException) {
-        log(e.code.toString());
         if (e.code == 'user-not-found') {
           errorMsg = 'User not found';
         } else if (e.code == 'wrong-password') {
@@ -43,6 +44,22 @@ class ChatHomepageController extends GetxController {
       } else if (e is SocketException) {
         errorMsg = 'please check your internet connection';
       }
+    } finally {
+      if (users != null && users!.isNotEmpty) {
+        isError = false;
+      }
     }
+  }
+
+  showLoading(bool isLoading) {
+    this.isLoading = isLoading;
+    update();
+  }
+
+  Future<void> setCurrentUser() async {
+    currentUser = users?.firstWhere(
+        (user) => user.uid == FirebaseAuth.instance.currentUser?.uid);
+    // isLoading = false;
+    update();
   }
 }

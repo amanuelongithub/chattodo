@@ -3,7 +3,6 @@ import 'package:chat/models/chat_message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:uuid/uuid.dart';
 
 class ServicesController {
   static final firestore = FirebaseFirestore.instance;
@@ -44,5 +43,15 @@ class ServicesController {
           .collection('messages')
           .add(message.toJson());
     }
+  }
+
+  static Future<void> updateUserData(Map<String, dynamic> data) async =>
+      await firestore
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .update(data);
+
+  Future logoutUser() async{
+   await FirebaseAuth.instance.signOut();
   }
 }
