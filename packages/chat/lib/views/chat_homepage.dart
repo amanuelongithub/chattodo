@@ -1,9 +1,12 @@
+import 'dart:typed_data';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/chat_homepage_controller.dart';
 import 'package:chat/controller/firestore_controller.dart';
-import 'package:chat/views/widgets/chat_usercard.dart';
+import 'package:chat/models/group_model.dart';
+import 'package:chat/views/widgets/chat_card.dart';
 import 'package:chattodo_test/constants.dart';
 import 'package:chattodo_test/controller/services_controller.dart';
+import 'package:chattodo_test/models/user_model.dart';
 import 'package:chattodo_test/views/widget/error_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,13 +26,15 @@ class _ChatHomepageState extends State<ChatHomepage>
     with WidgetsBindingObserver {
   ChatHomepageController homepageController = Get.put(ChatHomepageController());
   FirestoreController chatpageController = Get.put(FirestoreController());
+  TextEditingController groupName = TextEditingController();
+  Uint8List? file;
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     if (homepageController.users == null || homepageController.users!.isEmpty) {
-      homepageController.fetchAllUsers();
+      homepageController.fetchHomeData();
     }
   }
 
@@ -137,7 +142,98 @@ class _ChatHomepageState extends State<ChatHomepage>
                   ListTile(
                     leading: const Icon(Icons.group),
                     title: const Text('Create group'),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pop(context);
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                                title: Text(
+                                  "Create group",
+                                  style:
+                                      TextStyle(color: AppConstant.kcPrimary),
+                                ),
+                                content: StatefulBuilder(
+                                    builder: (context, setState) {
+                                  return SizedBox(
+                                    height: 200.h,
+                                    child: Column(
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () async {
+                                            final pickedImage =
+                                                await pickImage();
+                                            setState(() => file = pickedImage!);
+                                          },
+                                          child: file != null
+                                              ? CircleAvatar(
+                                                  radius: 50,
+                                                  backgroundImage:
+                                                      MemoryImage(file!),
+                                                )
+                                              : const CircleAvatar(
+                                                  radius: 51,
+                                                  backgroundColor: Colors.grey,
+                                                  child: CircleAvatar(
+                                                    radius: 50,
+                                                    backgroundColor:
+                                                        Colors.white,
+                                                    child: Icon(
+                                                      Icons.add_a_photo,
+                                                      size: 40,
+                                                      color: Color.fromARGB(
+                                                          255, 163, 163, 163),
+                                                    ),
+                                                  ),
+                                                ),
+                                        ),
+                                        TextFormField(
+                                          controller: groupName,
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                }),
+                                actions: <Widget>[
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'Cancel'),
+                                      child: Text(
+                                        "Cancel",
+                                        style: TextStyle(
+                                            color: AppConstant.kcAppbarbg),
+                                      )),
+                                  TextButton(
+                                      child: const Text(
+                                        "Create",
+                                        style: TextStyle(
+                                            color:
+                                                Color.fromARGB(255, 5, 217, 5)),
+                                      ),
+                                      onPressed: () async {
+                                        final navigator = Navigator.of(context);
+
+                                        if (groupName.text.isNotEmpty &&
+                                            file != null) {
+                                          if (file != null) {
+                                            await ServicesController()
+                                                .buildGroup(
+                                                    file!,
+                                                    groupName.text,
+                                                    _.currentUser!.uid);
+                                            navigator.pop();
+                                          } else {
+                                            const snackBar = SnackBar(
+                                                content: Text(
+                                                    'Please select a profile picture'));
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                            return;
+                                          }
+                                        }
+                                      }),
+                                ],
+                              ));
+                    },
                   ),
                   ListTile(
                     leading: const Icon(Icons.logout),
@@ -168,25 +264,43 @@ class _ChatHomepageState extends State<ChatHomepage>
                   color: AppConstant.kcBkg,
                   onRefresh: () =>
                       Future.delayed(const Duration(milliseconds: 400), () {
-                    _.fetchAllUsers();
+                    _.fetchHomeData;
                   }),
-                  child: ListView.separated(
-                    itemCount: _.users!.length,
-                    padding:
-                        const EdgeInsets.only(left: 20, right: 20, top: 20),
-                    itemBuilder: (context, index) => _.users![index].uid !=
-                            FirebaseAuth.instance.currentUser?.uid
-                        ? UserCard(user: _.users![index])
-                        : const SizedBox(),
-                    separatorBuilder: (BuildContext context, int index) =>
-                        Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: _.users![index].uid !=
-                              FirebaseAuth.instance.currentUser?.uid
-                          ? const Divider()
-                          : const SizedBox(),
-                    ),
-                  ),
+                  child: Builder(builder: (context) {
+                    final card = [..._.users!, ..._.groups!];
+                    return ListView.separated(
+                        itemCount: card.length,
+                        padding:
+                            const EdgeInsets.only(left: 20, right: 20, top: 20),
+                        itemBuilder: (context, index) {
+                          final item = card[index];
+                          if (item is UserModel &&
+                              _.users![index].uid !=
+                                  FirebaseAuth.instance.currentUser?.uid) {
+                            return ChatCard(user: item, groupModel: null);
+                          } else if (item is GroupModel) {
+                            return ChatCard(user: null, groupModel: item);
+                          } else {
+                            return const SizedBox();
+                          }
+                        },
+                        separatorBuilder: (BuildContext context, int index) {
+                          final card = [..._.users!, ..._.groups!];
+                          final item = card[index];
+
+                          return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: (item is UserModel &&
+                                      _.users![index].uid !=
+                                          FirebaseAuth
+                                              .instance.currentUser?.uid)
+                                  ? const Divider()
+                                  : item is GroupModel
+                                      ? const Divider()
+                                      : const SizedBox());
+                        });
+                  }),
                 )),
           );
         }

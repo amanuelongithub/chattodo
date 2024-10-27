@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
+import 'package:chat/controller/chat_homepage_controller.dart';
 import 'package:chat/models/chat_message_model.dart';
+import 'package:chat/models/group_model.dart';
 import 'package:chattodo_test/controller/services_controller.dart';
 import 'package:chattodo_test/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +14,8 @@ class FirestoreController extends GetxController {
   bool isLoading = false;
 
   UserModel? partner;
+  GroupModel? selectedGroup;
+
   List<MessageModel> messages = [];
 
   ScrollController scrollController = ScrollController();
@@ -21,6 +25,22 @@ class FirestoreController extends GetxController {
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('chat')
+        .doc(receiverId)
+        .collection('messages')
+        .orderBy('sentTime', descending: false)
+        .snapshots(includeMetadataChanges: true)
+        .listen((messages) {
+      this.messages = messages.docs
+          .map((doc) => MessageModel.fromJson(doc.data()))
+          .toList();
+      update();
+      scrollDown();
+    });
+  }
+
+  getGroupMessages(String receiverId) {
+    FirebaseFirestore.instance
+        .collection('groups')
         .doc(receiverId)
         .collection('messages')
         .orderBy('sentTime', descending: false)
@@ -49,6 +69,21 @@ class FirestoreController extends GetxController {
     });
   }
 
+  Future<void> getGroupById(String groupId) async {
+    isLoading = true;
+    update();
+
+    FirebaseFirestore.instance
+        .collection('groups')
+        .doc(groupId)
+        .snapshots(includeMetadataChanges: true)
+        .listen((group) {
+      selectedGroup = GroupModel.fromJson(group.data()!);
+      isLoading = false;
+      update();
+    });
+  }
+
   Future<void> addTextMessage({
     bool? addToChat,
     required String content,
@@ -57,6 +92,7 @@ class FirestoreController extends GetxController {
     final message = MessageModel(
       content: content,
       seen: false,
+      senderName: Get.find<ChatHomepageController>().currentUser!.name,
       sentTime: DateTime.now(),
       receiverId: receiverId,
       messageType: MessageType.text,
@@ -77,6 +113,7 @@ class FirestoreController extends GetxController {
     final message = MessageModel(
       content: image,
       seen: false,
+      senderName: Get.find<ChatHomepageController>().currentUser!.name,
       sentTime: DateTime.now(),
       receiverId: receiverId,
       messageType: MessageType.image,

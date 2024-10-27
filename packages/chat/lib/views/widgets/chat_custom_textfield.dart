@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chattodo_test/constants.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ChatCustomTextfield extends StatefulWidget {
-  const ChatCustomTextfield({super.key});
+  final bool? fromGroupPage;
+  const ChatCustomTextfield({super.key, this.fromGroupPage = false});
 
   @override
   State<ChatCustomTextfield> createState() => _ChatCustomTextfieldState();
@@ -31,7 +31,7 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Expanded(
                 child: TextFormField(
-                  cursorColor: Colors.white,
+                  cursorColor: AppConstant.kcPrimary,
                   maxLines: null,
                   decoration: const InputDecoration(
                     hintText: 'Type your message',
@@ -49,7 +49,7 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.grey,
+                    color: Colors.black,
                   ),
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.newline,
@@ -66,11 +66,21 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                 IconButton(
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
-                      await Get.find<FirestoreController>().addTextMessage(
-                        receiverId:
-                            Get.find<FirestoreController>().partner!.uid,
-                        content: text!,
-                      );
+                      if (widget.fromGroupPage == false) {
+                        await Get.find<FirestoreController>().addTextMessage(
+                          receiverId:
+                              Get.find<FirestoreController>().partner!.uid,
+                          content: text!,
+                        );
+                      } else {
+                        await Get.find<FirestoreController>().addTextMessage(
+                          addToChat: false,
+                          receiverId: Get.find<FirestoreController>()
+                              .selectedGroup!
+                              .uid,
+                          content: text!,
+                        );
+                      }
                       setState(() {
                         text = '';
                         startWriting = false;

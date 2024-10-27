@@ -8,11 +8,13 @@ class MessageBubble extends StatelessWidget {
   const MessageBubble({
     super.key,
     required this.isMe,
+    this.senderName,
     required this.isImage,
     required this.message,
   });
 
   final bool isMe;
+  final String? senderName;
   final bool isImage;
   final MessageModel message;
 
@@ -36,33 +38,55 @@ class MessageBubble extends StatelessWidget {
           ),
           margin: const EdgeInsets.only(top: 10, right: 10, left: 10),
           padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              isImage
-                  ? Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
+          child: FittedBox(
+            child: Row(
+              children: [
+                if (senderName != null && !isMe) ...{
+                  CircleAvatar(
+                    radius: 15,
+                    child: Text(
+                        senderName != '' ? senderName![0].toUpperCase() : 'Me'),
+                  ),
+                  const SizedBox(width: 10),
+                },
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    isImage
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: message.content,
+                              height: 200,
+                              width: 200,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Text(message.content,
+                            style: const TextStyle(color: Colors.white)),
+                    const SizedBox(height: 5),
+                    Text(
+                      timeago.format(message.sentTime),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
                       ),
-                      child: CachedNetworkImage(
-                        imageUrl: message.content,
-                        height: 200,
-                        width: 200,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Text(message.content,
-                      style: const TextStyle(color: Colors.white)),
-              const SizedBox(height: 5),
-              Text(
-                timeago.format(message.sentTime),
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 10,
+                    ),
+                  ],
                 ),
-              ),
-            ],
+                if (senderName != null && isMe) ...{
+                  const SizedBox(width: 10),
+                  CircleAvatar(
+                    radius: 15,
+                    child: Text(
+                        senderName != '' ? senderName![0].toUpperCase() : 'Me'),
+                  )
+                }
+              ],
+            ),
           ),
         ),
       );

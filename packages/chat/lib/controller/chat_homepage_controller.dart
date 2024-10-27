@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:chat/models/group_model.dart';
 import 'package:chattodo_test/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +14,32 @@ class ChatHomepageController extends GetxController {
 
   UserModel? currentUser;
   List<UserModel>? users;
+  List<GroupModel>? groups;
+
+  Future<void> fetchHomeData() async {
+    try {
+      isLoading = true;
+      update();
+      isError = false;
+      errorMsg = null;
+
+      Future.wait([
+        fetchAllUsers(),
+        fetchAllGroups(),
+        setCurrentUser(),
+      ]);
+    } catch (e) {
+      if (e is SocketException) {
+        errorMsg = 'please check your internet connection';
+      }
+    } finally {
+      if (users != null && users!.isNotEmpty) {
+        isError = false;
+      }
+    }
+    isLoading = false;
+    update();
+  }
 
   Future<void> fetchAllUsers() async {
     try {
@@ -49,6 +76,18 @@ class ChatHomepageController extends GetxController {
         isError = false;
       }
     }
+  }
+
+  Future<void> fetchAllGroups() async {
+    // real time updates
+    FirebaseFirestore.instance
+        .collection('groups')
+        .orderBy('lastActive', descending: true)
+        .snapshots(includeMetadataChanges: true)
+        .listen((grouplist) async {
+      groups =
+          grouplist.docs.map((doc) => GroupModel.fromJson(doc.data())).toList();
+    });
   }
 
   showLoading(bool isLoading) {

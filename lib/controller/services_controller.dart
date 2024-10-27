@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:chat/models/chat_message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:chat/models/group_model.dart';
+import 'package:uuid/uuid.dart';
 
 class ServicesController {
   static final firestore = FirebaseFirestore.instance;
@@ -38,7 +42,7 @@ class ServicesController {
           .add(message.toJson());
     } else {
       await firestore
-          .collection('group')
+          .collection('groups')
           .doc(receiverId)
           .collection('messages')
           .add(message.toJson());
@@ -56,7 +60,54 @@ class ServicesController {
   //         .collection('users')
   //         .doc(FirebaseAuth.instance.currentUser!.uid)
   //         .update(data);
-  Future logoutUser() async{
-   await FirebaseAuth.instance.signOut();
+
+  Future buildGroup(Uint8List file, String groupName, String createdBy) async {
+    var uuid = const Uuid();
+    final id = uuid.v4();
+    final image =
+        await ServicesController.uploadImage(file, 'image/profile/$id');
+
+    await createGroup(
+      name: groupName,
+      image: image,
+      id: id,
+      createdBy: createdBy,
+    );
+  }
+
+  static Future<void> createGroup({
+    required String id,
+    required String name,
+    required String image,
+    required String createdBy,
+  }) async {
+    try {
+      final group = GroupModel(
+          uid: id,
+          name: name,
+          image: image,
+          onlineUsers: 0,
+          createdBy: createdBy,
+          lastActive: DateTime.now());
+
+      await firestore.collection('groups').doc(id).set(group.toJson());
+    } catch (e) {
+      log(e.toString());
+      // isError = true;
+      // if (e is FirebaseException) {
+      //   if (e.code == 'already-exists') {
+      //     errorMsg =
+      //         'User already registerd with this email, please try another one';
+      //   } else {
+      //     errorMsg = 'Error occured while creating user';
+      //   }
+      // } else if (e is SocketException) {
+      //   errorMsg = 'please check your internet connection';
+      // }
+    }
+  }
+
+  Future logoutUser() async {
+    await FirebaseAuth.instance.signOut();
   }
 }
