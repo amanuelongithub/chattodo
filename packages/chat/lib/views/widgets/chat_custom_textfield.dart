@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chattodo_test/constants.dart';
@@ -6,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class ChatCustomTextfield extends StatefulWidget {
-  final bool? fromGroupPage;
-  const ChatCustomTextfield({super.key, this.fromGroupPage = false});
+  final bool? isFromGroup;
+  const ChatCustomTextfield({super.key, this.isFromGroup = false});
 
   @override
   State<ChatCustomTextfield> createState() => _ChatCustomTextfieldState();
@@ -19,6 +20,7 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   bool startWriting = false;
   @override
   Widget build(BuildContext context) {
+    log(widget.isFromGroup.toString());
     return Padding(
         padding: const EdgeInsets.all(1),
         child: Container(
@@ -60,13 +62,15 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     onPressed: () {},
                     icon: const Icon(Icons.audiotrack, size: 20)),
                 IconButton(
-                    onPressed: () async => _sendImage(),
+                    onPressed: () async => widget.isFromGroup!
+                        ? _sendImage(false)
+                        : _sendImage(true),
                     icon: const Icon(Icons.image, size: 20))
               } else ...{
                 IconButton(
                     onPressed: () async {
                       FocusScope.of(context).unfocus();
-                      if (widget.fromGroupPage == false) {
+                      if (widget.isFromGroup == false) {
                         await Get.find<FirestoreController>().addTextMessage(
                           receiverId:
                               Get.find<FirestoreController>().partner!.uid,
@@ -91,12 +95,15 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
             ])));
   }
 
-  Future<void> _sendImage() async {
+  Future<void> _sendImage(bool addToChat) async {
     final pickedImage = await pickImage();
     setState(() => file = pickedImage);
     if (file != null) {
       await FirestoreController.addImageMessage(
-        receiverId: Get.find<FirestoreController>().partner!.uid,
+        addToChat: addToChat,
+        receiverId: addToChat
+            ? Get.find<FirestoreController>().partner!.uid
+            : Get.find<FirestoreController>().selectedGroup!.uid,
         file: file!,
       );
     }

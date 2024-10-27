@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:chat/controller/chat_homepage_controller.dart';
@@ -103,7 +104,7 @@ class FirestoreController extends GetxController {
   }
 
   static Future<void> addImageMessage({
-    bool? addToChat,
+    required bool addToChat,
     required String receiverId,
     required Uint8List file,
   }) async {
@@ -119,8 +120,9 @@ class FirestoreController extends GetxController {
       messageType: MessageType.image,
       senderId: FirebaseAuth.instance.currentUser!.uid,
     );
-    await ServicesController.addMessageToChat(
-        addToChat ?? true, receiverId, message);
+    log('CCCCCCCCCCCCCCCCCCCcc');
+    log(message.toJson().toString());
+    await ServicesController.addMessageToChat(addToChat, receiverId, message);
   }
 
   void scrollDown() => WidgetsBinding.instance.addPostFrameCallback((_) {

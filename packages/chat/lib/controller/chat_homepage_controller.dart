@@ -26,8 +26,8 @@ class ChatHomepageController extends GetxController {
       Future.wait([
         fetchAllUsers(),
         fetchAllGroups(),
-        setCurrentUser(),
       ]);
+      setCurrentUser();
     } catch (e) {
       if (e is SocketException) {
         errorMsg = 'please check your internet connection';
@@ -102,7 +102,7 @@ class ChatHomepageController extends GetxController {
         .snapshots(includeMetadataChanges: true)
         .listen((user) {
       currentUser = UserModel.fromJson(user.data()!);
-      update();
     });
+    update();
   }
 }

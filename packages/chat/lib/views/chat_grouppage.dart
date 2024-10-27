@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_custom_textfield.dart';
@@ -107,7 +105,6 @@ class _ChatGroupPageState extends State<ChatGroupPage> {
                                 final isMe =
                                     FirebaseAuth.instance.currentUser!.uid ==
                                         _.messages[index].senderId;
-                                log(isMe.toString());
                                 return isTextMessage
                                     ? MessageBubble(
                                         isMe: isMe,
@@ -126,12 +123,12 @@ class _ChatGroupPageState extends State<ChatGroupPage> {
                             ),
                     ),
                   ),
-                ),
+                ),                 
                 Container(
                   height: 70,
                   padding: EdgeInsets.only(left: 0.w, right: 5),
                   decoration: const BoxDecoration(color: Colors.white),
-                  child: const ChatCustomTextfield(fromGroupPage: true),
+                  child: const ChatCustomTextfield(isFromGroup: true),
                 ),
               ],
             ),

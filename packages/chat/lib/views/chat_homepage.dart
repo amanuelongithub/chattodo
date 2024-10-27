@@ -39,6 +39,30 @@ class _ChatHomepageState extends State<ChatHomepage>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed: // when user get back to app
+        ServicesController.updateUserData({
+          'lastActive': DateTime.now(),
+          'isOnline': true,
+        });
+        break;
+
+      case AppLifecycleState.inactive: // run app in background
+      case AppLifecycleState.paused: // ex: switch to another app
+        ServicesController.updateUserData({'isOnline': false});
+        break;
+      case AppLifecycleState.detached: // terminat the app
+        ServicesController.updateUserData({'isOnline': false});
+        break;
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -46,6 +70,7 @@ class _ChatHomepageState extends State<ChatHomepage>
 
   @override
   Widget build(BuildContext context) {
+    Get.find<ChatHomepageController>().fetchAllUsers();
     return Scaffold(
       body: GetBuilder<ChatHomepageController>(builder: (_) {
         if (_.isLoading) {
