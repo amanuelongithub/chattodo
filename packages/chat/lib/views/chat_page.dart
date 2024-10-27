@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_custom_textfield.dart';
 import 'package:chat/views/widgets/empty_widget.dart';
@@ -5,7 +6,7 @@ import 'package:chat/views/widgets/message_bubble.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import '../models/chat_message_model.dart';
 
 class ChatPage extends StatefulWidget {
@@ -35,10 +36,45 @@ class _ChatPageState extends State<ChatPage> {
                   leading: const BackButton(
                     color: Colors.white,
                   ),
-                  title: Text(
-                    Get.find<FirestoreController>().partner!.name,
-                    style: const TextStyle(color: Colors.white),
+                  title: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: _.partner != null
+                            ? CachedNetworkImage(
+                                imageUrl: _.partner!.image,
+                                height: 40.r,
+                                width: 40.r,
+                                fit: BoxFit.cover,
+                              )
+                            : const SizedBox(),
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _.partner!.name,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          Text(
+                            _.partner!.isOnline
+                                ? 'Online'
+                                : timeago
+                                    .format(_.partner!.lastActive)
+                                    .toString(),
+                            style: TextStyle(
+                              color: _.partner!.isOnline
+                                  ? Colors.green
+                                  : Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+
                   // actions: [
                   //   IconButton(
                   //       onPressed: () {},

@@ -65,16 +65,16 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
               } else ...{
                 IconButton(
                     onPressed: () async {
-                      setState(() {
-                        text = null;
-                        startWriting = false;
-                      });
                       FocusScope.of(context).unfocus();
                       await Get.find<FirestoreController>().addTextMessage(
                         receiverId:
                             Get.find<FirestoreController>().partner!.uid,
                         content: text!,
                       );
+                      setState(() {
+                        text = '';
+                        startWriting = false;
+                      });
                     },
                     icon: const Icon(Icons.send, size: 25)),
               }
