@@ -2,6 +2,7 @@ class MessageModel {
   final String senderId;
   final String receiverId;
   final String content;
+  final bool seen;
   final DateTime sentTime;
   final MessageType messageType;
 
@@ -10,17 +11,17 @@ class MessageModel {
     required this.receiverId,
     required this.sentTime,
     required this.content,
+    required this.seen,
     required this.messageType,
   });
 
-  factory MessageModel.fromJson(Map<String, dynamic> json) =>
-      MessageModel(
+  factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
         receiverId: json['receiverId'],
         senderId: json['senderId'],
         sentTime: json['sentTime'].toDate(),
         content: json['content'],
-        messageType:
-            MessageType.fromJson(json['messageType']),
+        seen: json['seen'] ?? false,
+        messageType: MessageType.fromJson(json['messageType']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -28,6 +29,7 @@ class MessageModel {
         'senderId': senderId,
         'sentTime': sentTime,
         'content': content,
+        'seen': seen,
         'messageType': messageType.toJson(),
       };
 }
@@ -39,6 +41,5 @@ enum MessageType {
 
   String toJson() => name;
 
-  factory MessageType.fromJson(String json) =>
-      values.byName(json);
+  factory MessageType.fromJson(String json) => values.byName(json);
 }

@@ -56,6 +56,7 @@ class FirestoreController extends GetxController {
   }) async {
     final message = MessageModel(
       content: content,
+      seen: false,
       sentTime: DateTime.now(),
       receiverId: receiverId,
       messageType: MessageType.text,
@@ -75,6 +76,7 @@ class FirestoreController extends GetxController {
 
     final message = MessageModel(
       content: image,
+      seen: false,
       sentTime: DateTime.now(),
       receiverId: receiverId,
       messageType: MessageType.image,

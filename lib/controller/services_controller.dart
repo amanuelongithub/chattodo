@@ -51,6 +51,11 @@ class ServicesController {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update(data);
 
+  // static Future<void> updateMessageData(Map<String, dynamic> data) async =>
+  //     await firestore
+  //         .collection('users')
+  //         .doc(FirebaseAuth.instance.currentUser!.uid)
+  //         .update(data);
   Future logoutUser() async{
    await FirebaseAuth.instance.signOut();
   }

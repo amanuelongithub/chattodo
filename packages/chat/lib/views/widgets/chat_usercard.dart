@@ -51,13 +51,18 @@ class UserCard extends StatelessWidget {
                   : const SizedBox(),
             ],
           ),
-          title: Text(
-            user.name,
-            style: const TextStyle(
-              color: Colors.black,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+          title: Row(
+            children: [
+              Text(
+                user.name,
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              // ! seen func
+            ],
           ),
           subtitle: Text(
             'Last Active : ${timeago.format(user.lastActive)}',

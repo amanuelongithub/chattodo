@@ -57,9 +57,13 @@ class ChatHomepageController extends GetxController {
   }
 
   Future<void> setCurrentUser() async {
-    currentUser = users?.firstWhere(
-        (user) => user.uid == FirebaseAuth.instance.currentUser?.uid);
-    // isLoading = false;
-    update();
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid)
+        .snapshots(includeMetadataChanges: true)
+        .listen((user) {
+      currentUser = UserModel.fromJson(user.data()!);
+      update();
+    });
   }
 }
