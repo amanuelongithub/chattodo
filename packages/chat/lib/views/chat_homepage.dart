@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/chat_homepage_controller.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_usercard.dart';
@@ -29,7 +28,9 @@ class _ChatHomepageState extends State<ChatHomepage>
   void initState() {
     WidgetsBinding.instance.addObserver(this);
     super.initState();
-    homepageController.fetchAllUsers();
+    if (homepageController.users == null || homepageController.users!.isEmpty) {
+      homepageController.fetchAllUsers();
+    }
   }
 
   @override
@@ -43,7 +44,6 @@ class _ChatHomepageState extends State<ChatHomepage>
     return Scaffold(
       body: GetBuilder<ChatHomepageController>(builder: (_) {
         if (_.isLoading) {
-          log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
           return Scaffold(
             body: Center(
                 child: CircularProgressIndicator(
@@ -94,33 +94,45 @@ class _ChatHomepageState extends State<ChatHomepage>
                       decoration: const BoxDecoration(
                         color: Colors.black,
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 38.r,
-                            backgroundImage: _.currentUser != null
-                                ? NetworkImage(_.currentUser!.image)
-                                : null,
-                          ),
-                          const Spacer(),
-                          Text(
-                            _.currentUser != null
-                                ? _.currentUser!.name.toUpperCase()
-                                : '',
-                            style: const TextStyle(
-                              color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 60,
+                              width: 60,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: _.currentUser != null
+                                    ? CachedNetworkImage(
+                                        imageUrl: _.currentUser!.image,
+                                        height: 57.r,
+                                        width: 57.r,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : const SizedBox(),
+                              ),
                             ),
-                          ),
-                          Text(
-                            _.currentUser != null ? _.currentUser!.email : '',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Colors.grey,
+                            const Spacer(),
+                            Text(
+                              _.currentUser != null
+                                  ? _.currentUser!.name.toUpperCase()
+                                  : '',
+                              style: const TextStyle(
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                          const Spacer(),
-                        ],
+                            Text(
+                              _.currentUser != null ? _.currentUser!.email : '',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            const Spacer(),
+                          ],
+                        ),
                       )),
                   ListTile(
                     leading: const Icon(Icons.group),
@@ -151,20 +163,29 @@ class _ChatHomepageState extends State<ChatHomepage>
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(30),
                         topRight: Radius.circular(30))),
-                child: ListView.separated(
-                  itemCount: _.users!.length,
-                  padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                  itemBuilder: (context, index) => _.users![index].uid !=
-                          FirebaseAuth.instance.currentUser?.uid
-                      ? UserCard(user: _.users![index])
-                      : const SizedBox(),
-                  separatorBuilder: (BuildContext context, int index) =>
-                      Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _.users![index].uid !=
+                child: RefreshIndicator(
+                  backgroundColor: AppConstant.kcPrimary,
+                  color: AppConstant.kcBkg,
+                  onRefresh: () =>
+                      Future.delayed(const Duration(milliseconds: 400), () {
+                    _.fetchAllUsers();
+                  }),
+                  child: ListView.separated(
+                    itemCount: _.users!.length,
+                    padding:
+                        const EdgeInsets.only(left: 20, right: 20, top: 20),
+                    itemBuilder: (context, index) => _.users![index].uid !=
                             FirebaseAuth.instance.currentUser?.uid
-                        ? const Divider()
+                        ? UserCard(user: _.users![index])
                         : const SizedBox(),
+                    separatorBuilder: (BuildContext context, int index) =>
+                        Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _.users![index].uid !=
+                              FirebaseAuth.instance.currentUser?.uid
+                          ? const Divider()
+                          : const SizedBox(),
+                    ),
                   ),
                 )),
           );
