@@ -31,6 +31,9 @@ class AuthController extends GetxController {
         email: email,
         password: pwd,
       );
+      await ServicesController.updateUserData(
+        {'isOnline': true, 'lastActive': DateTime.now()},
+      );
     } catch (e) {
       isError = true;
       if (e is FirebaseAuthException) {
