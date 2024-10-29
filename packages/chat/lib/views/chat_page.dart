@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_custom_textfield.dart';
@@ -141,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
                                       );
 
                                     default:
-                                      const SizedBox();
+                                      return const SizedBox();
                                   }
                                 },
                               ),

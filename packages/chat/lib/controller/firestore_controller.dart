@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -23,7 +22,6 @@ class FirestoreController extends GetxController {
   ScrollController scrollController = ScrollController();
 
   getMessages(String receiverId) {
-    try {
       FirebaseFirestore.instance
           .collection('users')
           .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -36,11 +34,11 @@ class FirestoreController extends GetxController {
         this.messages = messages.docs
             .map((doc) => MessageModel.fromJson(doc.data()))
             .toList();
+            
         update();
         scrollDown();
       });
-    } catch (e) {
-    }
+   
   }
 
   getGroupMessages(String receiverId) {

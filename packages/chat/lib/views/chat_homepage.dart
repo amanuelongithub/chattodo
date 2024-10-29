@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/chat_homepage_controller.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/models/group_model.dart';
+import 'package:chat/views/chat_seachpage.dart';
 import 'package:chat/views/widgets/chat_card.dart';
 import 'package:chattodo_test/constants.dart';
 import 'package:chattodo_test/controller/services_controller.dart';
@@ -106,7 +107,8 @@ class _ChatHomepageState extends State<ChatHomepage>
                   ),
                   actions: [
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () =>
+                            navigator!.pushNamed(ChatSearchPage.route),
                         icon: const Icon(
                           Icons.search,
                           color: Colors.white,

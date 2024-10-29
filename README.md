@@ -74,7 +74,6 @@ __Chattodo_test
     Chat app
      - seen 
      - notification
-     - audio
      - search user 
      - serach msg
    Todo

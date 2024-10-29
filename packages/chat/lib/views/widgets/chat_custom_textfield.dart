@@ -72,9 +72,8 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     onLongPressEnd: (end) {
                       _stopRecording();
                     },
-                    child: CircleAvatar(
-                        radius: 25,
-                        child: const Icon(Icons.audiotrack, size: 20))),
+                    child: const CircleAvatar(
+                        radius: 25, child: Icon(Icons.audiotrack, size: 20))),
                 IconButton(
                     onPressed: () async => widget.isFromGroup!
                         ? _sendImage(false)
@@ -136,17 +135,15 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   }
 
   Future<void> _startRecording() async {
-    // Check and request permission
     if (await _record.hasPermission()) {
-      // Get the temporary directory path
       Directory tempDir = await getTemporaryDirectory();
       String path = '${tempDir.path}/${DateTime.now()}.m4a';
 
       await _record.start(
-        path: path, // the file path where audio is saved
-        encoder: AudioEncoder.aacHe, // use AAC encoding
-        bitRate: 128000, // optional bitrate
-        samplingRate: 44100, // optional sampling rate
+        path: path,
+        encoder: AudioEncoder.aacHe,
+        bitRate: 128000,
+        samplingRate: 44100,
       );
 
       setState(() {
@@ -156,10 +153,7 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   }
 
   Future<void> _stopRecording() async {
-    // Stop recording and release the resources
     await _record.stop();
-    await sendAudio(true);
-
-    // Update UI if needed
+    widget.isFromGroup! ? await sendAudio(false) : await sendAudio(true);
   }
 }
