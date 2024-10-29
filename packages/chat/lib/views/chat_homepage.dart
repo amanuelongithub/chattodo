@@ -36,6 +36,7 @@ class _ChatHomepageState extends State<ChatHomepage>
     super.initState();
     if (homepageController.users == null || homepageController.users!.isEmpty) {
       homepageController.fetchHomeData();
+      homepageController.setCurrentUser();
     }
   }
 
@@ -289,9 +290,10 @@ class _ChatHomepageState extends State<ChatHomepage>
                 child: RefreshIndicator(
                   backgroundColor: AppConstant.kcPrimary,
                   color: AppConstant.kcBkg,
-                  onRefresh: () =>
-                      Future.delayed(const Duration(milliseconds: 400), () {
+                  onRefresh: () async => await Future.delayed(
+                      const Duration(milliseconds: 400), () async {
                     _.fetchHomeData;
+                    _.setCurrentUser();
                   }),
                   child: Builder(builder: (context) {
                     final card = [..._.users!, ..._.groups!];

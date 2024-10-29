@@ -46,9 +46,7 @@ class _ChatSearchPageState extends State<ChatSearchPage> {
                     appBar: PreferredSize(
                         preferredSize: const Size.fromHeight(60),
                         child: AppBar(
-                            leading: const BackButton(
-                              color: Colors.white,
-                            ),
+                            leading: const BackButton(color: Colors.white),
                             title: SizedBox(
                               height: 40,
                               child: TextField(
