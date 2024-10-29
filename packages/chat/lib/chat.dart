@@ -1,4 +1,2 @@
 library chat;
 
-/// A Calculator.
-

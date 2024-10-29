@@ -34,14 +34,14 @@ class AuthController extends GetxController {
     } catch (e) {
       isError = true;
       if (e is FirebaseAuthException) {
-        if (e.code == 'user-not-found') {
+        if (e.code == 'invalid-credential') {
           errorMsg = 'User not found';
         } else if (e.code == 'wrong-password') {
           errorMsg = 'Wrong password';
         }
       } else if (e is SocketException) {
         errorMsg = 'please check your internet connection';
-      } 
+      }
     } finally {
       isLoading = false;
     }
@@ -69,7 +69,7 @@ class AuthController extends GetxController {
     } catch (e) {
       isError = true;
       if (e is FirebaseAuthException) {
-       if (e.code == 'already-exists') {
+        if (e.code == 'already-exists') {
           errorMsg =
               'User alredy registerd with this email, please try another one';
         } else if (e.code == 'weak-password') {
@@ -112,5 +112,34 @@ class AuthController extends GetxController {
         errorMsg = 'please check your internet connection';
       }
     }
+  }
+
+  Future<void> forgotPassword(String email) async {
+    try {
+      isLoading = true;
+      update();
+      isError = false;
+      errorMsg = null;
+
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: email,
+      );
+    } catch (e) {
+      isError = true;
+      if (e is FirebaseAuthException) {
+        if (e.code == 'invalid-credential') {
+          errorMsg = 'User not found';
+        }
+      } else if (e is SocketException) {
+        errorMsg = 'please check your internet connection';
+      }
+    } finally {
+      isLoading = false;
+    }
+    update();
+  }
+
+  logout() {
+    FirebaseAuth.instance.signOut();
   }
 }
