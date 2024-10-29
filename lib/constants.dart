@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 class AppConstant {
   static Color kcPrimary = hexToColor('#5D1190');
   static Color kcBkg = hexToColor('#F9F9F9'); // bg grey
+  static Color kcAppbarbg = hexToColor('#000000'); // bg grey
 }
 
 Color hexToColor(String code) {

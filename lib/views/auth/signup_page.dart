@@ -161,6 +161,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                     if (file != null) {
                                       await auth.signUp(file!, username!, email!, pwd!);
                                       if(!auth.isError){
+                                        
                                         navigator.pushReplacementNamed(HomePage.route);
                                       }else{
                                       snack.showSnackBar(SnackBar(content: Text(auth.errorMsg??'someting want wrong')));
