@@ -1,5 +1,8 @@
 # chattodo_test
 
+## Folder struc
+
+```
 __Chattodo_test
     | lib
     |    |__controllers
@@ -50,7 +53,7 @@ __Chattodo_test
     |        |   |   |routs.dart
     |        |   |   |chat.dart
     |        |   |
-
+```
 
 
     ------------------------------------------------------------------
@@ -70,10 +73,3 @@ __Chattodo_test
        - flutter_screenutil | For adaptive screen adjustments
     ------------------------------------------------------------------
 
-    
-    Chat app
-     - seen 
-     - notification
-     - serach msg
-   Todo
-     - 
