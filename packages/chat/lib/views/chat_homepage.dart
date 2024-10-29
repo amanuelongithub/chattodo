@@ -35,6 +35,7 @@ class _ChatHomepageState extends State<ChatHomepage>
     WidgetsBinding.instance.addObserver(this);
     super.initState();
     if (homepageController.users == null || homepageController.users!.isEmpty) {
+      homepageController.setCurrentUser();
       homepageController.fetchHomeData();
       homepageController.setCurrentUser();
     }
