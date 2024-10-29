@@ -72,7 +72,9 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                     onLongPressEnd: (end) {
                       _stopRecording();
                     },
-                    child: const Icon(Icons.audiotrack, size: 20)),
+                    child: CircleAvatar(
+                        radius: 25,
+                        child: const Icon(Icons.audiotrack, size: 20))),
                 IconButton(
                     onPressed: () async => widget.isFromGroup!
                         ? _sendImage(false)
@@ -156,7 +158,8 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   Future<void> _stopRecording() async {
     // Stop recording and release the resources
     await _record.stop();
-    
-     // Update UI if needed
+    await sendAudio(true);
+
+    // Update UI if needed
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chat/views/widgets/chat_custom_textfield.dart';
@@ -109,22 +111,38 @@ class _ChatPageState extends State<ChatPage> {
                                 controller: _.scrollController,
                                 itemCount: _.messages.length,
                                 itemBuilder: (context, index) {
-                                  final isTextMessage =
-                                      _.messages[index].messageType ==
-                                          MessageType.text;
                                   final isMe = _.partner!.uid !=
                                       _.messages[index].senderId;
+                                  switch (_.messages[index].messageType) {
+                                    case MessageType.text:
+                                      return MessageBubble(
+                                          isMe: isMe,
+                                          message: _.messages[index],
+                                          senderName:
+                                              _.messages[index].senderName,
+                                          isImage: null);
 
-                                  return isTextMessage
-                                      ? MessageBubble(
-                                          isMe: isMe,
-                                          message: _.messages[index],
-                                          isImage: false)
-                                      : MessageBubble(
-                                          isMe: isMe,
-                                          message: _.messages[index],
-                                          isImage: true,
-                                        );
+                                    case MessageType.image:
+                                      return MessageBubble(
+                                        isMe: isMe,
+                                        message: _.messages[index],
+                                        senderName:
+                                            _.messages[index].senderName,
+                                        isImage: true,
+                                      );
+
+                                    case MessageType.audio:
+                                      return MessageBubble(
+                                        isMe: isMe,
+                                        message: _.messages[index],
+                                        senderName:
+                                            _.messages[index].senderName,
+                                        isImage: false,
+                                      );
+
+                                    default:
+                                      const SizedBox();
+                                  }
                                 },
                               ),
                       ),

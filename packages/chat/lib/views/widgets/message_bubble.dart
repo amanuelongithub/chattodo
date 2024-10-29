@@ -23,6 +23,7 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final player = AudioPlayer();
+    bool isPlaying = false;
 
     return Align(
       alignment: isMe ? Alignment.bottomRight : Alignment.bottomLeft,
@@ -61,7 +62,7 @@ class MessageBubble extends StatelessWidget {
                   if (isImage == null) ...{
                     Text(message.content,
                         style: const TextStyle(color: Colors.white)),
-                  } else if (isImage!) ...{
+                  } else if (isImage == true) ...{
                     Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15),
@@ -74,22 +75,39 @@ class MessageBubble extends StatelessWidget {
                       ),
                     )
                   } else ...{
-                    Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: ListTile(
-                          onTap: () {},
-                          leading: CircleAvatar(
-                            radius: 20,
-                            backgroundColor: const Color.fromARGB(255, 255, 226, 248),
-                            child: Icon(
-                              Icons.play_arrow,
-                              color: AppConstant.kcPrimary,
-                            ),
+                    StatefulBuilder(builder: (contxt, setState) {
+                      return Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                          title: const Text('audio'),
-                        ))
+                          height: 50,
+                          width: 100,
+                          child: ListTile(
+                            onTap: () async {
+                              setState(() {
+                                isPlaying = true;
+                              });
+
+                              await player.play(UrlSource(message.content));
+                            },
+                            contentPadding: EdgeInsets.zero,
+                            leading: CircleAvatar(
+                              radius: 20,
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 226, 248),
+                              child: Icon(
+                                isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: AppConstant.kcPrimary,
+                              ),
+                            ),
+                            title: const Text(
+                              'audio',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 255, 226, 248),
+                              ),
+                            ),
+                          ));
+                    })
                   },
                   const SizedBox(height: 5),
                   Row(

@@ -105,30 +105,28 @@ class _ChatGroupPageState extends State<ChatGroupPage> {
 
                                 switch (_.messages[index].messageType) {
                                   case MessageType.text:
-                                    MessageBubble(
+                                    return MessageBubble(
                                         isMe: isMe,
                                         message: _.messages[index],
                                         senderName:
                                             _.messages[index].senderName,
                                         isImage: null);
-                                    break;
+
                                   case MessageType.image:
-                                    MessageBubble(
+                                    return MessageBubble(
                                       isMe: isMe,
                                       message: _.messages[index],
                                       senderName: _.messages[index].senderName,
                                       isImage: true,
                                     );
-                                    break;
+
                                   case MessageType.audio:
-                                    MessageBubble(
+                                    return MessageBubble(
                                       isMe: isMe,
                                       message: _.messages[index],
                                       senderName: _.messages[index].senderName,
                                       isImage: false,
                                     );
-                                    break;
-                                  default:
                                 }
                               },
                             ),

@@ -23,21 +23,24 @@ class FirestoreController extends GetxController {
   ScrollController scrollController = ScrollController();
 
   getMessages(String receiverId) {
-    FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('chat')
-        .doc(receiverId)
-        .collection('messages')
-        .orderBy('sentTime', descending: false)
-        .snapshots(includeMetadataChanges: true)
-        .listen((messages) {
-      this.messages = messages.docs
-          .map((doc) => MessageModel.fromJson(doc.data()))
-          .toList();
-      update();
-      scrollDown();
-    });
+    try {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection('chat')
+          .doc(receiverId)
+          .collection('messages')
+          .orderBy('sentTime', descending: false)
+          .snapshots(includeMetadataChanges: true)
+          .listen((messages) {
+        this.messages = messages.docs
+            .map((doc) => MessageModel.fromJson(doc.data()))
+            .toList();
+        update();
+        scrollDown();
+      });
+    } catch (e) {
+    }
   }
 
   getGroupMessages(String receiverId) {
@@ -123,6 +126,7 @@ class FirestoreController extends GetxController {
     );
     await ServicesController.addMessageToChat(addToChat, receiverId, message);
   }
+
   static Future<void> addAudioMessage({
     required bool addToChat,
     required String receiverId,
