@@ -16,6 +16,10 @@ class ChatHomepageController extends GetxController {
   List<UserModel>? users;
   List<GroupModel>? groups;
 
+  clearMessage() {
+
+  }
+
   Future<void> fetchHomeData() async {
     try {
       isLoading = true;

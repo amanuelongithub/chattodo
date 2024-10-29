@@ -99,31 +99,42 @@ class _ChatGroupPageState extends State<ChatGroupPage> {
                               controller: _.scrollController,
                               itemCount: _.messages.length,
                               itemBuilder: (context, index) {
-                                final isTextMessage =
-                                    _.messages[index].messageType ==
-                                        MessageType.text;
                                 final isMe =
                                     FirebaseAuth.instance.currentUser!.uid ==
                                         _.messages[index].senderId;
-                                return isTextMessage
-                                    ? MessageBubble(
+
+                                switch (_.messages[index].messageType) {
+                                  case MessageType.text:
+                                    MessageBubble(
                                         isMe: isMe,
                                         message: _.messages[index],
                                         senderName:
                                             _.messages[index].senderName,
-                                        isImage: false)
-                                    : MessageBubble(
-                                        isMe: isMe,
-                                        message: _.messages[index],
-                                        senderName:
-                                            _.messages[index].senderName,
-                                        isImage: true,
-                                      );
+                                        isImage: null);
+                                    break;
+                                  case MessageType.image:
+                                    MessageBubble(
+                                      isMe: isMe,
+                                      message: _.messages[index],
+                                      senderName: _.messages[index].senderName,
+                                      isImage: true,
+                                    );
+                                    break;
+                                  case MessageType.audio:
+                                    MessageBubble(
+                                      isMe: isMe,
+                                      message: _.messages[index],
+                                      senderName: _.messages[index].senderName,
+                                      isImage: false,
+                                    );
+                                    break;
+                                  default:
+                                }
                               },
                             ),
                     ),
                   ),
-                ),                 
+                ),
                 Container(
                   height: 70,
                   padding: EdgeInsets.only(left: 0.w, right: 5),

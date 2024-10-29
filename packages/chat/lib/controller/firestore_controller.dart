@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chat/controller/chat_homepage_controller.dart';
@@ -120,8 +121,25 @@ class FirestoreController extends GetxController {
       messageType: MessageType.image,
       senderId: FirebaseAuth.instance.currentUser!.uid,
     );
-    log('CCCCCCCCCCCCCCCCCCCcc');
-    log(message.toJson().toString());
+    await ServicesController.addMessageToChat(addToChat, receiverId, message);
+  }
+  static Future<void> addAudioMessage({
+    required bool addToChat,
+    required String receiverId,
+    required File file,
+  }) async {
+    final audio = await ServicesController.uploadAudio(
+        file, 'audio/chat/${DateTime.now()}');
+
+    final message = MessageModel(
+      content: audio,
+      seen: false,
+      senderName: Get.find<ChatHomepageController>().currentUser!.name,
+      sentTime: DateTime.now(),
+      receiverId: receiverId,
+      messageType: MessageType.audio,
+      senderId: FirebaseAuth.instance.currentUser!.uid,
+    );
     await ServicesController.addMessageToChat(addToChat, receiverId, message);
   }
 

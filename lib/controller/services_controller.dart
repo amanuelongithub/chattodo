@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:chat/models/chat_message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,6 +18,13 @@ class ServicesController {
           .ref()
           .child(storagePath)
           .putData(file)
+          .then((task) => task.ref.getDownloadURL());
+
+  static Future<String> uploadAudio(File file, String storagePath) async =>
+      await FirebaseStorage.instance
+          .ref()
+          .child(storagePath)
+          .putFile(file)
           .then((task) => task.ref.getDownloadURL());
 
   static Future<void> addMessageToChat(

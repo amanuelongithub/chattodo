@@ -1,10 +1,13 @@
 import 'dart:developer';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:chat/controller/firestore_controller.dart';
 import 'package:chattodo_test/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:record/record.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ChatCustomTextfield extends StatefulWidget {
   final bool? isFromGroup;
@@ -18,6 +21,10 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
   String? text;
   Uint8List? file;
   bool startWriting = false;
+
+  final _record = Record();
+  File? audioFile;
+
   @override
   Widget build(BuildContext context) {
     log(widget.isFromGroup.toString());
@@ -58,9 +65,14 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
                 ),
               ),
               if (!startWriting || text == '' || text == null) ...{
-                IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.audiotrack, size: 20)),
+                GestureDetector(
+                    onLongPressStart: (start) {
+                      _startRecording();
+                    },
+                    onLongPressEnd: (end) {
+                      _stopRecording();
+                    },
+                    child: const Icon(Icons.audiotrack, size: 20)),
                 IconButton(
                     onPressed: () async => widget.isFromGroup!
                         ? _sendImage(false)
@@ -107,5 +119,44 @@ class _ChatCustomTextfieldState extends State<ChatCustomTextfield> {
         file: file!,
       );
     }
+  }
+
+  Future<void> sendAudio(bool addToChat) async {
+    if (audioFile != null) {
+      await FirestoreController.addAudioMessage(
+        addToChat: addToChat,
+        receiverId: addToChat
+            ? Get.find<FirestoreController>().partner!.uid
+            : Get.find<FirestoreController>().selectedGroup!.uid,
+        file: audioFile!,
+      );
+    }
+  }
+
+  Future<void> _startRecording() async {
+    // Check and request permission
+    if (await _record.hasPermission()) {
+      // Get the temporary directory path
+      Directory tempDir = await getTemporaryDirectory();
+      String path = '${tempDir.path}/${DateTime.now()}.m4a';
+
+      await _record.start(
+        path: path, // the file path where audio is saved
+        encoder: AudioEncoder.aacHe, // use AAC encoding
+        bitRate: 128000, // optional bitrate
+        samplingRate: 44100, // optional sampling rate
+      );
+
+      setState(() {
+        audioFile = File(path);
+      });
+    }
+  }
+
+  Future<void> _stopRecording() async {
+    // Stop recording and release the resources
+    await _record.stop();
+    
+     // Update UI if needed
   }
 }

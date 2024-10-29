@@ -69,3 +69,13 @@ __Chattodo_test
        - timeago | Descriptive display of time (UX)
        - flutter_screenutil | For adaptive screen adjustments
     ------------------------------------------------------------------
+
+    
+    Chat app
+     - seen 
+     - notification
+     - audio
+     - search user 
+     - serach msg
+   Todo
+     - 
