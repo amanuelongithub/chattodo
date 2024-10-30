@@ -3,6 +3,7 @@ import 'package:chattodo_test/firebase_options.dart';
 import 'package:chattodo_test/routs.dart';
 import 'package:chattodo_test/views/splash_page.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -12,6 +13,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await FirebaseMessaging.instance.subscribeToTopic("All");
+
+  await FirebaseApi().initNotifications();
   runApp(const MyApp());
 }
 
